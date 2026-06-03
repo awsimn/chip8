@@ -21,8 +21,11 @@ public:
     uint16_t opcode;
 
     void LoadROM(char const* filename);
+    void OP_00E0();
+    void OP_00EE();
+    void OP_1nnn();
 
 private:
     std::default_random_engine randomGenerator;
-    std::uniform_int_distribution <uint8_t> randomByte;
+    std::uniform_int_distribution <uint8_t> randomByte {0, 255};
 };

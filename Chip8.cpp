@@ -1,6 +1,7 @@
 #include "Chip8.h"
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 const unsigned int START_ADDRESS = 0x200;
 
@@ -61,4 +62,18 @@ void Chip8::LoadROM(char const *filename)
     {
         std::cout << "File failed to open.";
     }
+}
+
+void Chip8::OP_00E0()
+{
+    std::memset(video, 0, sizeof(video));
+}
+
+void Chip8::OP_00EE()
+{
+    stackPointer -= 1;
+    programCounter = stack[stackPointer];
+}
+
+void Chip8::OP_1nnn(){
 }
