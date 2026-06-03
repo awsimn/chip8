@@ -75,5 +75,8 @@ void Chip8::OP_00EE()
     programCounter = stack[stackPointer];
 }
 
-void Chip8::OP_1nnn(){
+void Chip8::OP_1nnn()
+{
+    uint16_t jumpAddress = opcode & 0x0FFFu;
+    programCounter = jumpAddress;
 }
