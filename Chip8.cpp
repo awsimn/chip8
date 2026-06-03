@@ -80,3 +80,11 @@ void Chip8::OP_1nnn()
     uint16_t jumpAddress = opcode & 0x0FFFu;
     programCounter = jumpAddress;
 }
+
+void Chip8::OP_2nnn()
+{
+    stack[stackPointer] = programCounter;
+    stackPointer += 1;
+    uint16_t callAddress = opcode & 0x0FFFu;
+    programCounter = callAddress;
+}
