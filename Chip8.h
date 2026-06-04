@@ -8,10 +8,10 @@ const unsigned int START_ADDRESS = 0x200;
 class Chip8
 {
 public:
-    uint8_t VRegisters[16]{};
-    uint16_t indexRegister{};
-    uint16_t programCounter{};
-    uint8_t memory[4096]{};
+    uint8_t VRegisters[16]{}; // 16 8 bit V registers that hold values to undergo computation during emulator execution
+    uint16_t indexRegister{}; // 16 bit index register that can hold resource files
+    uint16_t programCounter{};// 16 bit program counter that holds the value of current ROM instruction
+    uint8_t memory[4096]{};   // 4KB virtual memory segmented into 3 sections(Interpreter, Fontset, ROM)
     uint16_t stack[16]{};
     uint8_t stackPointer{};
     uint8_t delayTimer{};
@@ -25,6 +25,7 @@ public:
     void OP_00EE();
     void OP_1nnn();
     void OP_2nnn();
+    void OP_3xkk();
 
 private:
     std::default_random_engine randomGenerator;

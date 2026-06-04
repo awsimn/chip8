@@ -3,9 +3,11 @@
 #include <fstream>
 #include <cstring>
 
+// Start address of the ROM file storage section of memory
 const unsigned int START_ADDRESS = 0x200;
 
 const unsigned int FONTSET_SIZE = 80;
+// Start address of the fontset section of memory
 const unsigned int FONTSET_START_ADDRESS = 0x50;
 uint8_t fontset[FONTSET_SIZE] =
     {
@@ -31,6 +33,7 @@ Chip8::Chip8() : randomGenerator(std::chrono::system_clock::now().time_since_epo
 {
     programCounter = START_ADDRESS;
 
+    // Upon initializing the class load the fontset into memory
     for (unsigned int i = 0; i < FONTSET_SIZE; i++)
     {
         memory[FONTSET_START_ADDRESS + i] = fontset[i];
@@ -39,22 +42,27 @@ Chip8::Chip8() : randomGenerator(std::chrono::system_clock::now().time_since_epo
 
 void Chip8::LoadROM(char const *filename)
 {
+    // Open an ifstream to allow ROM file to be read as a binary file and point to the end of the file(ate - AT THE END)
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
 
     if (file.is_open())
     {
+        // Get size of the ROM file and create a buffer based on ROM file's size
         std::streampos size = file.tellg();
         char *buffer = new char[size];
 
+        // Go back to the beginning of the file and read the whole file into the newly created buffer
         file.seekg(std::ios::beg);
         file.read(buffer, size);
         file.close();
 
+        // Copy the ROM data from the temporary buffer into the Chip8's virtual memory array
         for (long i = 0; i < size; i++)
         {
             memory[START_ADDRESS + i] = buffer[i];
         }
 
+        // Free allocated heap memory for the buffer and no dangling pointers are left
         delete[] buffer;
         buffer = nullptr;
     }
@@ -64,27 +72,48 @@ void Chip8::LoadROM(char const *filename)
     }
 }
 
+// CLS - Clear the video array(representing the emulator display) and set all values to 0 to represent an empty screen
 void Chip8::OP_00E0()
 {
     std::memset(video, 0, sizeof(video));
 }
 
+// RET instruction - return the program counter(PC) to the memory address at the end of the stack (LIFO)
 void Chip8::OP_00EE()
 {
     stackPointer -= 1;
     programCounter = stack[stackPointer];
 }
 
+// JP  instruction - Use bitmasking to get the memory address emulator needs to jump to
+// Set the PC to jump to that address
 void Chip8::OP_1nnn()
 {
     uint16_t jumpAddress = opcode & 0x0FFFu;
     programCounter = jumpAddress;
 }
 
+// CALL instruction - Set the current stack slot to the return address (next instruction) to save it
+// Increment stack pointer(SP) to get ready for next CALL
+// Use bitmasking to isolate address PC needs to jump to and set PC to that address
 void Chip8::OP_2nnn()
 {
     stack[stackPointer] = programCounter;
     stackPointer += 1;
     uint16_t callAddress = opcode & 0x0FFFu;
     programCounter = callAddress;
+}
+
+// SE instruction - Use bitmasking + bitshifting to isolate V Register number and normalise value to number of VRs(16)
+// Use bitmasking again to isolate comparison value against value inside VR
+// If value equal then increment PC
+void Chip8::OP_3xkk()
+{
+    uint16_t vRegNumber = (opcode & 0x0F00u) >> 8u;
+    uint16_t compareByte = opcode & 0x00FFu;
+
+    if (VRegisters[vRegNumber] == compareByte)
+    {
+        programCounter += 2;
+    }
 }
