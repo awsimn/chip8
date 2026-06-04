@@ -104,16 +104,63 @@ void Chip8::OP_2nnn()
     programCounter = callAddress;
 }
 
-// SE instruction - Use bitmasking + bitshifting to isolate V Register number and normalise value to number of VRs(16)
+// SE instruction (Vx, compareByte) - Use bitmasking + bitshifting to isolate Vx and normalise value to number of VRs(16)
 // Use bitmasking again to isolate comparison value against value inside VR
 // If value equal then increment PC
 void Chip8::OP_3xkk()
 {
-    uint16_t vRegNumber = (opcode & 0x0F00u) >> 8u;
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
     uint16_t compareByte = opcode & 0x00FFu;
 
-    if (VRegisters[vRegNumber] == compareByte)
+    if (VRegisters[Vx] == compareByte)
     {
         programCounter += 2;
     }
+}
+
+// SNE instruction (Vx, compareByte) - Same masking and bitmasking flow as SE instruction
+// If value NOT equal then increment PC
+void Chip8::OP_4xkk()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t compareByte = opcode & 0x00FFu;
+
+    if (VRegisters[Vx] != compareByte)
+    {
+        programCounter += 2;
+    }
+}
+
+// SE instruction (Vx, Vy) - Same masking and bitmasking flow as SE instruction but on two different parts of the opcode
+// Opcode x value is situated in second nibble so needs 8u shift. Opcode y value is third nibble so needs 4u shift
+// If values equal then increment PC
+void Chip8::OP_5xy0()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    if (VRegisters[Vx] == VRegisters[Vy])
+    {
+        programCounter += 2;
+    }
+}
+
+// LD instruction(Vx, updateValue) - Isolate the target VR index and the raw byte value via bitmasking and bitshifting
+// Assign the byte value directly into the Vx slot in the VRegisters array
+void Chip8::OP_6xkk()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t updateValue = opcode & 0x00FFu;
+
+    VRegisters[Vx] = updateValue;
+}
+
+// ADD instruction (Vx, addValue) - Isolate the target VR index and the raw byte value via bitmasking and bitshifting
+// Add the byte value to the value inside the VR at index Vx
+void Chip8::OP_7xkk()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t addValue = opcode & 0x00FFu;
+
+    VRegisters[Vx] += addValue;
 }

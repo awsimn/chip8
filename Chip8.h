@@ -12,8 +12,8 @@ public:
     uint16_t indexRegister{}; // 16 bit index register that can hold resource files
     uint16_t programCounter{};// 16 bit program counter that holds the value of current ROM instruction
     uint8_t memory[4096]{};   // 4KB virtual memory segmented into 3 sections(Interpreter, Fontset, ROM)
-    uint16_t stack[16]{};
-    uint8_t stackPointer{};
+    uint16_t stack[16]{};     // 16 level stack that helps keep track of CALL, RET instructions
+    uint8_t stackPointer{};   // Stack pointer that helps store and retrieve memory addresses for CALL,RET
     uint8_t delayTimer{};
     uint8_t soundTimer{};
     uint8_t keyboard[16]{};
@@ -26,6 +26,10 @@ public:
     void OP_1nnn();
     void OP_2nnn();
     void OP_3xkk();
+    void OP_4xkk();
+    void OP_5xy0();
+    void OP_6xkk();
+    void OP_7xkk();
 
 private:
     std::default_random_engine randomGenerator;
