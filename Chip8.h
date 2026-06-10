@@ -30,6 +30,7 @@ public:
     void OP_5xy0();
     void OP_6xkk();
     void OP_7xkk();
+    void OP_8xy0();
 
 private:
     std::default_random_engine randomGenerator;

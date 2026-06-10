@@ -62,7 +62,7 @@ void Chip8::LoadROM(char const *filename)
             memory[START_ADDRESS + i] = buffer[i];
         }
 
-        // Free allocated heap memory for the buffer and no dangling pointers are left
+        // Free allocated heap memory for the buffer and ensure no dangling pointers are left
         delete[] buffer;
         buffer = nullptr;
     }
@@ -163,4 +163,14 @@ void Chip8::OP_7xkk()
     uint16_t addValue = opcode & 0x00FFu;
 
     VRegisters[Vx] += addValue;
+}
+
+// LD instruction(Vx, Vy) - Isolate the target VR indexes(Vx, Vy) via bitmasking and bitshifting
+// Assign the Vy value directly into the Vx slot in the VRegisters array
+void Chip8::OP_8xy0()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    VRegisters[Vx] = VRegisters[Vy];
 }
