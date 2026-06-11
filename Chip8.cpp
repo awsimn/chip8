@@ -175,11 +175,55 @@ void Chip8::OP_8xy0()
     VRegisters[Vx] = VRegisters[Vy];
 }
 
-// LD instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
-// Use bitwise OR to apply OR on corresponding Vx and Vy bits to turn them on or leave them off
-void Chip8::OP_8xy1(){
+// OR instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// Use bitwise OR to apply OR on corresponding Vx and Vy bits to TURN THEM ON or LEAVE THEM OFF
+void Chip8::OP_8xy1()
+{
     uint16_t Vx = (opcode & 0x0F00u) >> 8u;
     uint16_t Vy = (opcode & 0x00F0u) >> 4u;
 
-    VRegisters[Vx] |= VRegisters[Vy]; 
+    VRegisters[Vx] |= VRegisters[Vy];
+}
+
+// AND instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// Use bitwise AND to apply AND on corresponding Vx and Vy bits to LEAVE THEM ON or TURN THEM OFF
+void Chip8::OP_8xy2()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    VRegisters[Vx] &= VRegisters[Vy];
+}
+
+// XOR instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// Use bitwise XOR to apply AND on corresponding Vx and Vy bits to TURN THEM BOTH OFF or LEAVE ONE ON
+void Chip8::OP_8xy3()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    VRegisters[Vx] ^= VRegisters[Vy];
+}
+
+// ADD instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// Calculate sum of values inside both registers. Use bitwise AND to convert sum back to 8 bit and store in Vx
+//If sum > 255 set register Vf to 1 else 0
+void Chip8::OP_8xy4()
+{
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    uint16_t total = VRegisters[Vx] + VRegisters[Vy];
+
+    VRegisters[Vx] = total & 0xFFu;
+
+    if (total > 255U)
+    {
+        VRegisters[0xF] = 1;
+    }
+    else
+    {
+        VRegisters[0xF] = 0;
+    }
+
 }
