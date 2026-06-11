@@ -174,3 +174,12 @@ void Chip8::OP_8xy0()
 
     VRegisters[Vx] = VRegisters[Vy];
 }
+
+// LD instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// Use bitwise OR to apply OR on corresponding Vx and Vy bits to turn them on or leave them off
+void Chip8::OP_8xy1(){
+    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    VRegisters[Vx] |= VRegisters[Vy]; 
+}
