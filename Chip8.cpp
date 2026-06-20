@@ -109,8 +109,8 @@ void Chip8::OP_2nnn()
 // If value equal then increment PC
 void Chip8::OP_3xkk()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t compareByte = opcode & 0x00FFu;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t compareByte = opcode & 0x00FFu;
 
     if (VRegisters[Vx] == compareByte)
     {
@@ -122,8 +122,8 @@ void Chip8::OP_3xkk()
 // If value NOT equal then increment PC
 void Chip8::OP_4xkk()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t compareByte = opcode & 0x00FFu;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t compareByte = opcode & 0x00FFu;
 
     if (VRegisters[Vx] != compareByte)
     {
@@ -136,8 +136,8 @@ void Chip8::OP_4xkk()
 // If values equal then increment PC
 void Chip8::OP_5xy0()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     if (VRegisters[Vx] == VRegisters[Vy])
     {
@@ -149,8 +149,8 @@ void Chip8::OP_5xy0()
 // Assign the byte value directly into the Vx slot in the VRegisters array
 void Chip8::OP_6xkk()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t updateValue = opcode & 0x00FFu;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t updateValue = opcode & 0x00FFu;
 
     VRegisters[Vx] = updateValue;
 }
@@ -159,8 +159,8 @@ void Chip8::OP_6xkk()
 // Add the byte value to the value inside the VR at index Vx
 void Chip8::OP_7xkk()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t addValue = opcode & 0x00FFu;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t addValue = opcode & 0x00FFu;
 
     VRegisters[Vx] += addValue;
 }
@@ -169,8 +169,8 @@ void Chip8::OP_7xkk()
 // Assign the Vy value directly into the Vx slot in the VRegisters array
 void Chip8::OP_8xy0()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     VRegisters[Vx] = VRegisters[Vy];
 }
@@ -179,8 +179,8 @@ void Chip8::OP_8xy0()
 // Use bitwise OR to apply OR on corresponding Vx and Vy bits to TURN THEM ON or LEAVE THEM OFF
 void Chip8::OP_8xy1()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     VRegisters[Vx] |= VRegisters[Vy];
 }
@@ -189,8 +189,8 @@ void Chip8::OP_8xy1()
 // Use bitwise AND to apply AND on corresponding Vx and Vy bits to LEAVE THEM ON or TURN THEM OFF
 void Chip8::OP_8xy2()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     VRegisters[Vx] &= VRegisters[Vy];
 }
@@ -199,19 +199,19 @@ void Chip8::OP_8xy2()
 // Use bitwise XOR to apply AND on corresponding Vx and Vy bits to TURN THEM BOTH OFF or LEAVE ONE ON
 void Chip8::OP_8xy3()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     VRegisters[Vx] ^= VRegisters[Vy];
 }
 
 // ADD instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
 // Calculate sum of values inside both registers. Use bitwise AND to convert sum back to 8 bit and store in Vx
-//If sum > 255 set register Vf to 1 else 0
+// If sum > 255 set register Vf to 1 else 0
 void Chip8::OP_8xy4()
 {
-    uint16_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint16_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     uint16_t total = VRegisters[Vx] + VRegisters[Vy];
 
@@ -225,5 +225,97 @@ void Chip8::OP_8xy4()
     {
         VRegisters[0xF] = 0;
     }
+}
 
+// SUB instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// Calculate difference of values inside both registers(Vx - Vy) and set the Vx to the resultant
+// If Vx > Vy set register Vf to 1 else 0
+void Chip8::OP_8xy5()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    if (VRegisters[Vx] >= VRegisters[Vy])
+    {
+        VRegisters[0xF] = 1;
+    }
+    else
+    {
+        VRegisters[0xF] = 0;
+    }
+
+    uint8_t diff = VRegisters[Vx] - VRegisters[Vy];
+    VRegisters[Vx] = diff;
+}
+
+// SHR instruction (Vx) - Isolate VR index via bitmasking and bitshifting
+// Set Vf to the value of the last bit in VRegister[Vx] via bitmasking
+// This sets Vf to either 1 or 0 depending on what the last bit of VRegister[Vx] contained
+// Set VRegister[Vx] to new value equal to old value with all bits shifted right once
+void Chip8::OP_8xy6(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    VRegisters[0xF] = VRegisters[Vx] & 0x1u;
+
+    VRegisters[Vx] = VRegisters[Vx] >> 1u;
+}
+
+// SUBN instruction (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// Calculate difference of values inside both registers(Vy - Vx) and set the Vx to the resultant
+// If Vy > Vx set register Vf to 1 else 0
+void Chip8::OP_8xy7()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    if (VRegisters[Vy] >= VRegisters[Vx])
+    {
+        VRegisters[0xF] = 1;
+    }
+    else
+    {
+        VRegisters[0xF] = 0;
+    }
+
+    uint8_t diff = VRegisters[Vy] - VRegisters[Vx];
+    VRegisters[Vx] = diff;
+}
+
+// SHL instruction (Vx) - Isolate VR index via bitmasking and bitshifting
+// Get the first bit of VRegisters[Vx] through bitmasking (0x80u = 1000 0000) and shift down by seven to reach end
+// This sets Vf to either 1 or 0 depending on what the first bit of VRegister[Vx] contained
+// Set VRegister[Vx] to new value equal to old value with all bits shifted left once
+void Chip8::OP_8xyE(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    VRegisters[0xF] = (VRegisters[Vx] & 0x80u) >> 7u;
+
+    VRegisters[Vx] = VRegisters[Vx] << 1u;
+}
+
+// SNE (Vx, Vy) - Isolate VR indexes via bitmasking and bitshifting
+// If VRegister values for Vx and Vy are not the same, double increment PC
+void Chip8::OP_9xy0(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0X00F0u) >> 4u;
+
+    if( VRegisters[Vx] != VRegisters[Vy]){
+        programCounter += 2;
+    }
+}
+
+// LD (I, addr) - Isolate address via bitmasking
+// Set indexRegister to point to that address
+void Chip8::OP_Annn(){
+    uint16_t address = opcode & 0x0FFFu;
+
+    indexRegister = address;
+}
+
+// JP (V0, addr) - Isolate address via bitmasking
+// Set programCounter to resultant address of sum of value in V0 and isolated address
+void Chip8::OP_Bnnn(){
+    uint16_t address = opcode & 0x0FFFu;
+
+    programCounter = VRegisters[0] + address; 
 }
