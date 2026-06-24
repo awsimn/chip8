@@ -383,3 +383,29 @@ void Chip8::OP_Dxyn()
         }
     }
 }
+
+// SKP instruction - (Vx)
+void Chip8::OP_Ex9E()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t keyPressed = VRegisters[Vx];
+
+    // If the key that is pressed has the same decimal value as the number inside Vx then skip next instruction
+    if (keyboard[keyPressed])
+    {
+        programCounter += 2;
+    }
+}
+
+// SKNP instruction - (Vx)
+void Chip8::OP_ExA1()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t keyPressed = VRegisters[Vx];
+
+    // If the key that is pressed does NOT have the same decimal value as the number inside Vx then skip next instruction
+    if (!keyboard[keyPressed])
+    {
+        programCounter += 2;
+    }
+}
