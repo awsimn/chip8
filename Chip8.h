@@ -20,6 +20,9 @@ public:
     uint32_t video[64 * 32]{};
     uint16_t opcode;
 
+    static constexpr unsigned int VIDEO_WIDTH = 64;
+    static constexpr unsigned int VIDEO_HEIGHT = 32;
+
     void LoadROM(char const* filename);
     void OP_00E0();
     void OP_00EE();
