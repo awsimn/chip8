@@ -409,3 +409,74 @@ void Chip8::OP_ExA1()
         programCounter += 2;
     }
 }
+
+// LD (Vx, DT)
+// Set VRegister number Vx value to the value of the delay timer
+void Chip8::OP_Fx07()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    VRegisters[Vx] = delayTimer;
+}
+
+// LD (Vx, keyboard)
+void Chip8::OP_Fx0A()
+{
+    // Get Vx via bitmasking and bitshifting
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    // Loop through each keyboard index to check if the key was pressed
+    for (unsigned int i = 0; i < sizeof(keyboard); i++)
+    {
+        // If a key was pressed, store the value of that key into the VRegister corresponding to Vx and return
+        if (keyboard[i])
+        {
+            VRegisters[Vx] = i;
+            return;
+        }
+    }
+    // If a key was not pressed, wait till key is pressed by repeating previous instruction in a loop
+    programCounter -= 2;
+}
+
+// LD (delayTimer, Vx)
+// Set delayTimer value to value of VRegister corresponding to Vx
+void Chip8::OP_Fx15()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    delayTimer = VRegisters[Vx];
+}
+
+// LD (soundTimer, Vx)
+// Set soundTimer value to value of VRegister corresponding to Vx
+void Chip8::OP_Fx18()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    soundTimer = VRegisters[Vx];
+}
+
+// ADD (indexRegister, Vx)
+// Set the value of indexRegister to the sum of indexRegister and VRegister[Vx]
+void Chip8::OP_Fx1E()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    indexRegister = indexRegister + VRegisters[Vx];
+}
+
+// LD (F, Vx)
+void Chip8::OP_Fx29()
+{
+    // Get Vx via bitmasking and bitshifting
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    // Store the corresponding VRegister value to Vx inside
+    uint8_t spriteDigit = VRegisters[Vx];
+
+    // Store the value of the corresponding digit inside indexRegister
+    // while accounting for the fact that a fontset character is 5 bytes long so every digit takes up 5 addresses
+    indexRegister = FONTSET_START_ADDRESS + (5 * spriteDigit);
+}
+
