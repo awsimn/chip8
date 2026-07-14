@@ -480,3 +480,45 @@ void Chip8::OP_Fx29()
     indexRegister = FONTSET_START_ADDRESS + (5 * spriteDigit);
 }
 
+// LD (B, Vx)
+void Chip8::OP_Fx33()
+{
+    // Get Vx via bitmasking and bitshifting
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t number = VRegisters[Vx];
+
+    // Get needed part of the number(upto 255), use module to extract and store part in appropriate memory address
+    // Divide by 10 to get a floating point number that is automatically truncated
+    // Repeat process for each part of the number(unit, ten, hundred)
+    memory[indexRegister + 2] = number % 10;
+    number = number / 10;
+
+    memory[indexRegister + 1] = number % 10;
+    number = number / 10;
+
+    memory[indexRegister] = number;
+}
+
+// LD ([I], Vx)
+void Chip8::OP_Fx55()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    // Store Vregisters ranging from V0 to Vx in memory at address starting at indexRegister
+    for (uint8_t i = 0; i <= Vx; i++)
+    {
+        memory[indexRegister + i] = VRegisters[i];
+    }
+}
+
+// LD (Vx, [I])
+void Chip8::OP_Fx65()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    // Load values from memory starting at indexRegister into registers V0 through Vx inclusive
+    for (uint8_t i = 0; i <= Vx; i++)
+    {
+        VRegisters[i] = memory[indexRegister + i];
+    }
+}
