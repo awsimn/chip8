@@ -39,6 +39,23 @@ Chip8::Chip8() : randomGenerator(std::chrono::system_clock::now().time_since_epo
         memory[FONTSET_START_ADDRESS + i] = fontset[i];
     }
 
+    /**
+     * HOW THIS ROUTING ENGINE WORKS (Notes for me):
+     *
+     * 1. An opcode comes in (e.g., 0xF033).
+     * 2. The main Cycle() function grabs the first digit ('F') and uses it as an array index.
+     * 3. table[0xF] stores the memory address of the TableF() router function.
+     * 4. We jump to TableF(). Inside it, we isolate the last two digits ('33').
+     * 5. tableF[0x33] stores the memory address of the actual worker function: OP_Fx33().
+     *
+     * SYNTAX BREAKDOWN: ((*this).*(tableF[index]))();
+     * - (*this)       = Get this active emulator object.
+     * - .*            = The bridge operator. Connect the object to the function pointer, dereferencing Chip8Func.
+     * - tableF[index] = The variable holding the raw memory address of the code.
+     * - ()            = Pull the trigger and execute the function.
+     */
+
+    // Allocate the routing functions and opcode functions into the correct memory addresses
     table[0x0] = &Chip8::Table0;
     table[0x1] = &Chip8::OP_1nnn;
     table[0x2] = &Chip8::OP_2nnn;
@@ -56,6 +73,7 @@ Chip8::Chip8() : randomGenerator(std::chrono::system_clock::now().time_since_epo
     table[0xE] = &Chip8::TableE;
     table[0xF] = &Chip8::TableF;
 
+    // Fill the empty cells with OP_NULL for safety purposes
     for (size_t i = 0; i <= 0xE; i++)
     {
         table0[i], table8[i], tableE[i] = &Chip8::OP_NULL;
