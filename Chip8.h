@@ -8,12 +8,14 @@ const unsigned int START_ADDRESS = 0x200;
 class Chip8
 {
 public:
-    uint8_t VRegisters[16]{}; // 16 8 bit V registers that hold values to undergo computation during emulator execution
-    uint16_t indexRegister{}; // 16 bit index register that can hold resource files
-    uint16_t programCounter{};// 16 bit program counter that holds the value of current ROM instruction
-    uint8_t memory[4096]{};   // 4KB virtual memory segmented into 3 sections(Interpreter, Fontset, ROM)
-    uint16_t stack[16]{};     // 16 level stack that helps keep track of CALL, RET instructions
-    uint8_t stackPointer{};   // Stack pointer that helps store and retrieve memory addresses for CALL,RET
+    Chip8();
+
+    uint8_t VRegisters[16]{};  // 16 8 bit V registers that hold values to undergo computation during emulator execution
+    uint16_t indexRegister{};  // 16 bit index register that can hold resource files
+    uint16_t programCounter{}; // 16 bit program counter that holds the value of current ROM instruction
+    uint8_t memory[4096]{};    // 4KB virtual memory segmented into 3 sections(Interpreter, Fontset, ROM)
+    uint16_t stack[16]{};      // 16 level stack that helps keep track of CALL, RET instructions
+    uint8_t stackPointer{};    // Stack pointer that helps store and retrieve memory addresses for CALL,RET
     uint8_t delayTimer{};
     uint8_t soundTimer{};
     uint8_t keyboard[16]{};
@@ -23,7 +25,7 @@ public:
     static constexpr unsigned int VIDEO_WIDTH = 64;
     static constexpr unsigned int VIDEO_HEIGHT = 32;
 
-    void LoadROM(char const* filename);
+    void LoadROM(char const *filename);
     void OP_00E0();
     void OP_00EE();
     void OP_1nnn();
@@ -59,7 +61,20 @@ public:
     void OP_Fx55();
     void OP_Fx65();
 
+    void OP_NULL();
+    void Table0();
+    void Table8();
+    void TableE();
+    void TableF();
+
 private:
     std::default_random_engine randomGenerator;
-    std::uniform_int_distribution <uint8_t> randomByte {0, 255};
+    std::uniform_int_distribution<uint8_t> randomByte{0, 255};
+
+    typedef void (Chip8::*Chip8Func)();
+    Chip8Func table[0xF + 1];
+    Chip8Func table0[0xE + 1];
+    Chip8Func table8[0xE + 1];
+    Chip8Func tableE[0xE + 1];
+    Chip8Func tableF[0x65 + 1];
 };
