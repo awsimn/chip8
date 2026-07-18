@@ -619,3 +619,33 @@ void Chip8::TableF()
 {
     ((*this).*(tableF[opcode & 0x00FFu]))();
 }
+
+//---------------------------------------------------CPU Cycle------------------------------------------
+
+// Fetch, decode, execute cycle
+void Chip8::Cycle()
+{
+    /*
+    Complete opcode is equal to 2 bytes(16 bits) while each memory array is 1 byte(8 bits)
+    To get the complete opcode we need to extract it from both the PC and PC + 1 addresses
+    We get PC and left shift by 8 to make space for PC + 1. Then we use bitwise OR to combine both parts
+    */
+    // Fetch
+    opcode = (memory[programCounter] << 8u | memory[programCounter + 1]);
+
+    programCounter += 2;
+
+    // Decode + Execute
+    // Send the extracted opcode into  the main function pointer table to execute the appropriate opcode function
+    (*this.*(table[(opcode & 0xF000u) >> 12u]))();
+
+    if (delayTimer > 0)
+    {
+        delayTimer--;
+    }
+
+    if (soundTimer > 0)
+    {
+        soundTimer--;
+    }
+}

@@ -67,6 +67,8 @@ public:
     void TableE();
     void TableF();
 
+    void Cycle();
+
 private:
     std::default_random_engine randomGenerator;
     std::uniform_int_distribution<uint8_t> randomByte{0, 255};
