@@ -3,8 +3,6 @@
 #include <chrono>
 #include <random>
 
-const unsigned int START_ADDRESS = 0x200;
-
 class Chip8
 {
 public:
