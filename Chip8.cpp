@@ -76,7 +76,9 @@ Chip8::Chip8() : randomGenerator(std::chrono::system_clock::now().time_since_epo
     // Fill the empty cells with OP_NULL for safety purposes
     for (size_t i = 0; i <= 0xE; i++)
     {
-        table0[i], table8[i], tableE[i] = &Chip8::OP_NULL;
+        table0[i] = &Chip8::OP_NULL;
+        tableE[i] = &Chip8::OP_NULL;
+        tableE[i] = &Chip8::OP_NULL;
     }
 
     for (size_t i = 0; i < 0x65; i++)
